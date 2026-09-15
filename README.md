@@ -48,7 +48,10 @@ The sample environment does not contain private credentials. Users should enter 
 
 Some Automation Exercise endpoints return HTTP status 200 while providing a different application-level `responseCode` in the JSON body. Both values are validated where applicable.
 
-## Author
+## About Me
 
-Reuben Jherico Silerio
-QA Engineer
+Hi, I'm **Reuben Jherico Silerio**, a QA Engineer with more than three years of hands-on experience in manual and functional testing across web, mobile, and production environments. My experience includes smoke, regression, end-to-end, UAT, and production validation testing.
+
+I am expanding my automation skills through API testing with Postman and JavaScript, as well as UI automation using Python, Selenium WebDriver, Pytest, and the Page Object Model. I focus on creating clear test documentation, reliable assertions, and evidence-driven quality validation.
+
+[View my GitHub profile](https://github.com/siler1o)
