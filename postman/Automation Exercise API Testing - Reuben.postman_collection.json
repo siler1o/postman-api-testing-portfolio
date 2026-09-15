@@ -1,0 +1,700 @@
+{
+  "info": {
+    "_postman_id": "39e09c63-718c-48ad-8468-953e34299cc2",
+    "name": "Automation Exercise API Testing - Reuben",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "58235666"
+  },
+  "item": [
+    {
+      "name": "AE-API-001 - Get All Products",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const response = pm.response.json();\r\n\r\npm.test(\"HTTP status is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"JSON responseCode is 200\", function () {\r\n    pm.expect(response.responseCode).to.eql(200);\r\n});\r\n\r\npm.test(\"Products list is not empty\", function () {\r\n    pm.expect(response.products).to.be.an(\"array\");\r\n    pm.expect(response.products.length).to.be.above(0);\r\n});\r\n\r\npm.test(\"Response time is below 2 seconds\", function () {\r\n    pm.expect(pm.response.responseTime).to.be.below(2000);\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/productsList",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "productsList"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "AE-API-002 - POST Products List Not Supported",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const response = pm.response.json();\r\n\r\npm.test(\"HTTP status is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"JSON responseCode is 405\", function () {\r\n    pm.expect(response.responseCode).to.eql(405);\r\n});\r\n\r\npm.test(\"Unsupported method message is correct\", function () {\r\n    pm.expect(response.message)\r\n        .to.eql(\"This request method is not supported.\");\r\n});\r\n\r\npm.test(\"Response is JSON\", function () {\r\n    pm.response.to.be.json;\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/productsList",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "productsList"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "AE-API-003 - Get All Brands",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const response = pm.response.json();\n\npm.test(\"HTTP status is 200\", function () {\n    pm.response.to.have.status(200);\n});\n\npm.test(\"Response is JSON\", function () {\n    pm.response.to.be.json;\n});\n\npm.test(\"JSON responseCode is 200\", function () {\n    pm.expect(response.responseCode).to.eql(200);\n});\n\npm.test(\"Brands list is not empty\", function () {\n    pm.expect(response.brands).to.be.an(\"array\");\n    pm.expect(response.brands.length).to.be.above(0);\n});\n\npm.test(\"First brand has required fields\", function () {\n    pm.expect(response.brands[0]).to.have.property(\"id\");\n    pm.expect(response.brands[0]).to.have.property(\"brand\");\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/brandsList",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "brandsList"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "AE-API-004 - PUT Brands List Not Supported",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const response = pm.response.json();\r\n\r\npm.test(\"HTTP status is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Response is JSON\", function () {\r\n    pm.response.to.be.json;\r\n});\r\n\r\npm.test(\"JSON responseCodes is 405\", function () {\r\n    pm.expect(response.responseCode).to.eql(405);\r\n});\r\n\r\npm.test(\"Unsupported method message is correct\", function () {\r\n    pm.expect(response.message).to.eql(\"This request method is not supported.\");\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/brandsList",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "brandsList"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "AE-API-005 - Search Product",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const response = pm.response.json();\r\nconst searchTerm = \"top\";\r\n\r\nconst allProductsMatch = response.products.every(product => {\r\n    const nameMatches =\r\n        product.name.toLowerCase().includes(searchTerm);\r\n\r\n    const brandMatches =\r\n        product.brand.toLowerCase().includes(searchTerm);\r\n\r\n    const categoryMatches =\r\n        product.category.category.toLowerCase().includes(searchTerm);\r\n\r\n    return nameMatches || brandMatches || categoryMatches;\r\n});\r\n\r\nconsole.log(\r\n    \"Returned product names:\",\r\n    response.products.map(product => product.name)\r\n);\r\n\r\npm.test(\"HTTP status is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Response is JSON\", function () {\r\n    pm.response.to.be.json;\r\n});\r\n\r\npm.test(\"JSON responseCode is 200\", function () {\r\n    pm.expect(response.responseCode).to.eql(200);\r\n});\r\n\r\npm.test(\"Product list is not empty\", function () {\r\n    pm.expect(response.products).to.be.an(\"array\");\r\n        pm.expect(response.products.length).to.be.above(0);\r\n});\r\n\r\npm.test(\"All returned product names contain the search keyword\", function () {\r\n    pm.expect(allProductsMatch).to.eql(true);\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "search_product",
+              "value": "top",
+              "type": "text"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/searchProduct",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "searchProduct"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "AE-API-006 - Search Product Missing Parameter",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const response = pm.response.json();\r\n\r\npm.test(\"HTTP status is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Response is JSON\", function () {\r\n    pm.response.to.be.json;\r\n});\r\n\r\npm.test(\"JSON responseCode is 400\", function () {\r\n    pm.expect(response.responseCode).to.eql(400);\r\n});\r\n\r\npm.test(\"Unsupported method message is correct\", function () {\r\n    pm.expect(response.message).to.eql(\"Bad request, search_product parameter is missing in POST request.\");\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "search_product",
+              "value": "top",
+              "type": "text",
+              "disabled": true
+            },
+            {
+              "key": "search_product",
+              "value": "",
+              "type": "text",
+              "disabled": true
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/searchProduct",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "searchProduct"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "AE-API-007 - Verify Login Valid Credentials",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const response = pm.response.json();\r\n\r\npm.test(\"HTTP status is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Response is JSON\", function () {\r\n    pm.response.to.be.json;\r\n});\r\n\r\npm.test(\"JSON responseCode is 200\", function () {\r\n    pm.expect(response.responseCode).to.eql(200);\r\n});\r\n\r\npm.test(\"Valid login message is correct\", function () {\r\n    pm.expect(response.message).to.eql(\"User exists!\");\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "email",
+              "value": "{{validEmail}}",
+              "type": "text"
+            },
+            {
+              "key": "password",
+              "value": "{{validPassword}}",
+              "type": "text"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/verifyLogin",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "verifyLogin"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "AE-API-008 - Verify Login Missing Email",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const response = pm.response.json();\r\n\r\npm.test(\"HTTP status is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Response is JSON\", function () {\r\n    pm.response.to.be.json;\r\n});\r\n\r\npm.test(\"JSON responseCode is 400\", function () {\r\n    pm.expect(response.responseCode).to.eql(400);\r\n});\r\n\r\npm.test(\"Missing email message is correct\", function () {\r\n    pm.expect(response.message).to.eql(\"Bad request, email or password parameter is missing in POST request.\");\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "email",
+              "value": "{{validEmail}}",
+              "type": "text",
+              "disabled": true
+            },
+            {
+              "key": "password",
+              "value": "{{validPassword}}",
+              "type": "text"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/verifyLogin",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "verifyLogin"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "AE-API-009 - DELETE Login Verification Not Supported",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const response = pm.response.json();\r\n\r\npm.test(\"HTTP status is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Response is JSON\", function () {\r\n    pm.response.to.be.json;\r\n});\r\n\r\npm.test(\"JSON responseCode is 405\", function () {\r\n    pm.expect(response.responseCode).to.eql(405);\r\n});\r\n\r\npm.test(\"Unsupported method message is correct\", function () {\r\n    pm.expect(response.message).to.eql(\"This request method is not supported.\");\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/verifyLogin",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "verifyLogin"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "AE-API-010 - Verify Login Invalid Credentials",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const response = pm.response.json();\r\n\r\npm.test(\"HTTP status is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Response is JSON\", function () {\r\n    pm.response.to.be.json;\r\n});\r\n\r\npm.test(\"JSON responseCode is 404\", function () {\r\n    pm.expect(response.responseCode).to.eql(404);\r\n});\r\n\r\npm.test(\"Invalid login message is correct\", function () {\r\n    pm.expect(response.message).to.eql(\"User not found!\");\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "email",
+              "value": "{{invalidEmail}}",
+              "type": "text"
+            },
+            {
+              "key": "password",
+              "value": "{{invalidPassword}}",
+              "type": "text"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/verifyLogin",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "verifyLogin"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "AE-API-011 - Create Account",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const uniqueEmail = `reuben.qa.${Date.now()}@example.com`;\r\n\r\npm.environment.set(\"validEmail\", uniqueEmail);\r\n\r\nconsole.log(\"Generated test email:\", uniqueEmail);"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const response = pm.response.json();\r\n\r\npm.test(\"HTTP status is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Response is JSON\", function () {\r\n    pm.response.to.be.json;\r\n});\r\n\r\npm.test(\"JSON responseCode is 201\", function () {\r\n    pm.expect(response.responseCode).to.eql(201);\r\n});\r\n\r\npm.test(\"Account creation message is correct\", function () {\r\n    pm.expect(response.message).to.eql(\"User created!\");\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "name",
+              "value": "Reuben QA",
+              "type": "text"
+            },
+            {
+              "key": "email",
+              "value": "{{validEmail}}",
+              "type": "text"
+            },
+            {
+              "key": "password",
+              "value": "{{validPassword}}",
+              "type": "text"
+            },
+            {
+              "key": "title",
+              "value": "Mr",
+              "type": "text"
+            },
+            {
+              "key": "birth_date",
+              "value": "31",
+              "type": "text"
+            },
+            {
+              "key": "birth_month",
+              "value": "07",
+              "type": "text"
+            },
+            {
+              "key": "birth_year",
+              "value": "2000",
+              "type": "text"
+            },
+            {
+              "key": "firstname",
+              "value": "JR",
+              "type": "text"
+            },
+            {
+              "key": "lastname",
+              "value": "Silerio",
+              "type": "text"
+            },
+            {
+              "key": "company",
+              "value": "QA portfolio",
+              "type": "text"
+            },
+            {
+              "key": "address1",
+              "value": "123 Test street",
+              "type": "text"
+            },
+            {
+              "key": "address2",
+              "value": "Unit 4",
+              "type": "text"
+            },
+            {
+              "key": "country",
+              "value": "Philippines",
+              "type": "text"
+            },
+            {
+              "key": "zipcode",
+              "value": "1111",
+              "type": "text"
+            },
+            {
+              "key": "state",
+              "value": "Metro Manila",
+              "type": "text"
+            },
+            {
+              "key": "city",
+              "value": "test city",
+              "type": "text"
+            },
+            {
+              "key": "mobile_number",
+              "value": "09170000000",
+              "type": "text"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/createAccount",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "createAccount"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "AE-API-013 - Update Account",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const response = pm.response.json();\r\n\r\npm.test(\"HTTP status is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Response is JSON\", function () {\r\n    pm.response.to.be.json;\r\n});\r\n\r\npm.test(\"JSON responseCode is 200\", function () {\r\n    pm.expect(response.responseCode).to.eql(200);\r\n});\r\n\r\npm.test(\"Account update message is correct\", function () {\r\n    pm.expect(response.message).to.eql(\"User updated!\");\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "name",
+              "value": "Reuben QA Updated",
+              "type": "text"
+            },
+            {
+              "key": "email",
+              "value": "{{validEmail}}",
+              "type": "text"
+            },
+            {
+              "key": "password",
+              "value": "{{validPassword}}",
+              "type": "text"
+            },
+            {
+              "key": "title",
+              "value": "Mr",
+              "type": "text"
+            },
+            {
+              "key": "birth_date",
+              "value": "31",
+              "type": "text"
+            },
+            {
+              "key": "birth_month",
+              "value": "07",
+              "type": "text"
+            },
+            {
+              "key": "birth_year",
+              "value": "2000",
+              "type": "text"
+            },
+            {
+              "key": "firstname",
+              "value": "JR",
+              "type": "text"
+            },
+            {
+              "key": "lastname",
+              "value": "Silerio",
+              "type": "text"
+            },
+            {
+              "key": "company",
+              "value": "QA Portfolio Updated",
+              "type": "text"
+            },
+            {
+              "key": "address1",
+              "value": "123 Test street",
+              "type": "text"
+            },
+            {
+              "key": "address2",
+              "value": "Unit 4",
+              "type": "text"
+            },
+            {
+              "key": "country",
+              "value": "Philippines",
+              "type": "text"
+            },
+            {
+              "key": "zipcode",
+              "value": "1111",
+              "type": "text"
+            },
+            {
+              "key": "state",
+              "value": "Metro Manila",
+              "type": "text"
+            },
+            {
+              "key": "city",
+              "value": "Quezon City",
+              "type": "text"
+            },
+            {
+              "key": "mobile_number",
+              "value": "09170000000",
+              "type": "text"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/updateAccount",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "updateAccount"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "AE-API-014 - Get User Details by Email",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const response = pm.response.json();\r\n\r\npm.test(\"HTTP status is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Response is JSON\", function () {\r\n    pm.response.to.be.json;\r\n});\r\n\r\npm.test(\"JSON responseCode is 200\", function () {\r\n    pm.expect(response.responseCode).to.eql(200);\r\n});\r\n\r\npm.test(\"User object contains a name\", function () {\r\n    pm.expect(response.user).to.have.property(\"name\");\r\n});\r\n\r\npm.test(\"User object contains a company\", function () {\r\n    pm.expect(response.user).to.have.property(\"company\");\r\n});\r\n\r\npm.test(\"User object contains a city\", function () {\r\n    pm.expect(response.user).to.have.property(\"city\");\r\n});\r\n\r\npm.test(\"Updated name is correct\", function () {\r\n    pm.expect(response.user.name).to.eql(\"Reuben QA Updated\");\r\n});\r\n\r\npm.test(\"Updated company is correct\", function () {\r\n    pm.expect(response.user.company).to.eql(\"QA Portfolio Updated\");\r\n});\r\n\r\npm.test(\"Updated company is correct\", function () {\r\n    pm.expect(response.user.city).to.eql(\"Quezon City\");\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/getUserDetailByEmail?email={{validEmail}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "getUserDetailByEmail"
+          ],
+          "query": [
+            {
+              "key": "email",
+              "value": "{{validEmail}}",
+              "description": "Email of the account created in AE-API-011"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "AE-API-012 – Delete Account",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const response = pm.response.json();\r\n\r\npm.test(\"HTTP status is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Response is JSON\", function () {\r\n    pm.response.to.be.json;\r\n});\r\n\r\npm.test(\"JSON responseCode is 200\", function () {\r\n    pm.expect(response.responseCode).to.eql(200);\r\n});\r\n\r\npm.test(\"Account deletion message is correct\", function () {\r\n    pm.expect(response.message).to.eql(\"Account deleted!\");\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "email",
+              "value": "{{validEmail}}",
+              "type": "text"
+            },
+            {
+              "key": "password",
+              "value": "{{validPassword}}",
+              "type": "text"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/deleteAccount",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "deleteAccount"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
