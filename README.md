@@ -69,16 +69,16 @@ The practice API has no project-defined two-second SLA. Enable a timing threshol
 Install Node.js 22 or later, then run from the repository root:
 
 ```powershell
-npx --yes newman@6.2.2 run postman/Automation-Exercise-API-Testing.postman_collection.json -e postman/Automation-Exercise-Sample.postman_environment.json --timeout-request 30000 --reporters cli,junit --reporter-junit-export reports/api-tests.xml
+npx --yes newman@6.2.2 run postman/Automation-Exercise-API-Testing.postman_collection.json -e postman/Automation-Exercise-Sample.postman_environment.json --delay-request 1000 --timeout-request 30000 --reporters cli,junit --reporter-junit-export reports/api-tests.xml
 ```
 
 Keep the default behavior of continuing after assertion failures so AE-API-012 can clean up the disposable account. Avoid `--bail` for a full lifecycle run.
 
 ## Continuous integration
 
-The [workflow](.github/workflows/api-tests.yml) runs the collection on pushes and pull requests to `main`, and supports manual execution from **Actions → API tests → Run workflow**.
+The [workflow](.github/workflows/api-tests.yml) runs the collection on collection/workflow changes pushed to `main` and pull requests to `main`, and supports manual execution from **Actions → API tests → Run workflow**.
 
-Failed assertions produce a failed job. JUnit results are uploaded when available, including on failure, and retained for 14 days. No GitHub secrets are needed for the generated practice accounts. This repository performs continuous testing; it does not deploy an application.
+Requests are spaced one second apart to reduce bursts against the shared practice server. Failed assertions produce a failed job. JUnit results are uploaded when available, including on failure, and retained for 14 days. No GitHub secrets are needed for the generated practice accounts. This repository performs continuous testing; it does not deploy an application.
 
 ## Verification snapshot
 
@@ -88,6 +88,7 @@ On 29 September 2026, the revised collection completed a live Newman run with **
 
 - The workbook and screenshots are **historical manual execution evidence**. Their recorded pass results are not the status of the latest collection or CI run.
 - The workbook uses the earlier `validEmail` naming and execution order. Follow this README and the canonical JSON collection for current automated runs.
+- HTTP 503 responses can occur when the shared practice site is overloaded. The suite reports these failures; it does not turn them into passes. Inspect the run logs and rerun when the service recovers.
 - The API may return HTTP 200 with JSON codes such as 201, 400, 404, or 405; tests distinguish these layers.
 - Search relevance checks cover the returned name, brand, and category fields. They do not independently prove completeness of the search results.
 - A canceled run or network failure can interrupt cleanup. In Postman, retain the generated collection values and rerun AE-API-012 after recovery. A failed creation response may require checking whether the practice server created the account before the connection failed.
