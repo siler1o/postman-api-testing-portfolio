@@ -82,13 +82,15 @@ Requests are spaced one second apart to reduce bursts against the shared practic
 
 ## Verification snapshot
 
-On 29 September 2026, the revised collection completed a live Newman run with **14 scenarios, 15 HTTP requests, and 67 passing assertions**. The extra request verifies login rejection after deletion. A separate guard check confirmed that running deletion without prior account creation fails without sending an HTTP request. The Actions badge above reports current CI status.
+On 29 September 2026, the revised collection [passed in GitHub Actions](https://github.com/siler1o/postman-api-testing-portfolio/actions/runs/36567163131) with **14 scenarios, 15 HTTP requests, and 69 passing assertions**. The extra request verifies login rejection after deletion. A separate guard check confirmed that running deletion without prior account creation fails without sending an HTTP request.
+
+A [subsequent run](https://github.com/siler1o/postman-api-testing-portfolio/actions/runs/36567178533) received HTML responses instead of API JSON, including HTTP 200 responses. Those responses correctly failed JSON validation, and dependent account requests were blocked. The Actions badge reports current CI status; the successful snapshot does not guarantee service availability.
 
 ## Evidence and limitations
 
 - The workbook and screenshots are **historical manual execution evidence**. Their recorded pass results are not the status of the latest collection or CI run.
 - The workbook uses the earlier `validEmail` naming and execution order. Follow this README and the canonical JSON collection for current automated runs.
-- HTTP 503 responses can occur when the shared practice site is overloaded. The suite reports these failures; it does not turn them into passes. Inspect the run logs and rerun when the service recovers.
+- The shared practice site has returned both HTTP 503 overload responses and HTTP 200 HTML responses during verification. The suite reports these failures; it does not turn them into passes. Inspect the run logs and rerun when the service recovers.
 - The API may return HTTP 200 with JSON codes such as 201, 400, 404, or 405; tests distinguish these layers.
 - Search relevance checks cover the returned name, brand, and category fields. They do not independently prove completeness of the search results.
 - A canceled run or network failure can interrupt cleanup. In Postman, retain the generated collection values and rerun AE-API-012 after recovery. A failed creation response may require checking whether the practice server created the account before the connection failed.
