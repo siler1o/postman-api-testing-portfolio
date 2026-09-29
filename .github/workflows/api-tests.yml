@@ -2,6 +2,7 @@ name: API tests
 on:
   push:
     branches: [main]
+    paths: ['postman/**', '.github/workflows/api-tests.yml']
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -28,6 +29,7 @@ jobs:
         run: >-
           newman run postman/Automation-Exercise-API-Testing.postman_collection.json
           --environment postman/Automation-Exercise-Sample.postman_environment.json
+          --delay-request 1000
           --timeout-request 30000
           --reporters cli,junit
           --reporter-junit-export reports/api-tests.xml
