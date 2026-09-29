@@ -1,35 +1,23 @@
 # Postman API Testing Portfolio
 
-A Postman API testing project built on the [Automation Exercise](https://automationexercise.com/api_list) practice API.
+[![API tests](https://github.com/siler1o/postman-api-testing-portfolio/actions/workflows/api-tests.yml/badge.svg)](https://github.com/siler1o/postman-api-testing-portfolio/actions/workflows/api-tests.yml)
 
-## Project Overview
+Functional API test automation for the [Automation Exercise practice API](https://automationexercise.com/api_list), built with **Postman, JavaScript, Newman, and GitHub Actions**.
 
-This project demonstrates functional API testing with Postman. The collection contains **14 positive and negative test scenarios** covering products, brands, product search, login verification, unsupported request methods, and account management. Every request includes automated JavaScript assertions written in Postman's test scripts.
+The collection implements **14 positive and negative scenarios** across product discovery, login verification, unsupported methods, and account lifecycle operations. It checks transport-level HTTP status separately from the API's JSON `responseCode`, then validates response data and messages.
 
-## Tools and Technologies
+[Collection](postman/Automation-Exercise-API-Testing.postman_collection.json) · [Latest CI runs](https://github.com/siler1o/postman-api-testing-portfolio/actions/workflows/api-tests.yml) · [Test-case workbook](test-cases/Automation-Exercise-API-Test-Cases.xlsx) · [Execution screenshots](screenshots/)
 
-* Postman
-* JavaScript
-* JSON
-* REST API
-* Git and GitHub
-* Microsoft Excel / Google Sheets
+## What this project demonstrates
 
-## Testing Coverage
+- GET, POST, PUT, and DELETE requests with form-data bodies and query parameters.
+- Positive and negative validation, including missing parameters and unsupported methods.
+- Product search checks against names, brands, and categories.
+- Disposable account creation, valid login, update, retrieval, and deletion.
+- Verification that an account cannot log in after deletion.
+- Repeatable command-line execution and CI results preserved as JUnit artifacts.
 
-* GET, POST, PUT, and DELETE requests
-* Query parameters and form-data bodies
-* Environment variables
-* Pre-request scripts with dynamic test email generation
-* HTTP status validation
-* JSON `responseCode` and message validation
-* Response structure and value assertions
-* Response time assertion
-* Positive and negative testing
-* Unsupported method (405) handling
-* Account lifecycle testing
-
-## Test Scenarios
+## Scenarios
 
 | ID | Scenario | Method | Endpoint | Expected `responseCode` |
 |----|----------|--------|----------|-------------------------|
@@ -48,49 +36,76 @@ This project demonstrates functional API testing with Postman. The collection co
 | AE-API-014 | Get User Details by Email | GET | `/api/getUserDetailByEmail` | 200 |
 | AE-API-012 | Delete Account | DELETE | `/api/deleteAccount` | 200 |
 
-## Account Lifecycle
+The IDs follow the practice site's scenario numbering; execution follows dependencies.
 
-The account tests depend on each other and must run in this order (this is also the order in the collection):
+## Run in Postman
 
-1. AE-API-011 – Create Account
-2. AE-API-013 – Update Account
-3. AE-API-014 – Get User Details by Email
-4. AE-API-012 – Delete Account
+1. Import **`postman/Automation-Exercise-API-Testing.postman_collection.json`**.
+2. Import **`postman/Automation-Exercise-Sample.postman_environment.json`** and select it.
+3. Run the entire collection in its saved order using Collection Runner.
 
-AE-API-011 generates a unique email in a pre-request script and stores it in the `newUserEmail` environment variable, so the remaining lifecycle requests reuse the same disposable account. Your own `validEmail` is never overwritten, so the full collection can be re-run repeatedly.
+No manually registered account or shared credentials are required. Remove older imported copies to avoid accidentally running stale scripts.
 
-## How to Run
+The execution order is **001–006 → 011 → 007–010 → 013 → 014 → 012**. Creation runs before valid login; deletion runs last. Run one iteration initially.
 
-1. Import the collection from the `postman/` folder into Postman.
-2. Import the sample environment from the same folder and select it.
-3. Fill in the environment values (see below).
-4. Run requests individually, or use the Collection Runner to run the whole collection in order.
+### Test data and isolation
 
-## Environment Variables
+AE-API-011 generates a UUID-based email and password. The collection stores them in `newUserEmail` and `newUserPassword`, and records successful creation in `createdUserEmail`. Dependent requests use those exact collection-owned values. Existing `validEmail` and `validPassword` environment variables are not changed or used.
 
-| Variable | Description |
-|----------|-------------|
-| `baseUrl` | Base URL of the API (e.g. `https://automationexercise.com`) |
-| `validEmail` | Email of an existing test account, used by AE-API-007 and AE-API-008 |
-| `validPassword` | Password for the test account, also used for the account created in AE-API-011 (secret) |
-| `invalidEmail` | Email that does not exist, used by AE-API-010 |
-| `invalidPassword` | Wrong password, used by AE-API-010 (secret) |
-| `newUserEmail` | Leave empty. Auto-generated by AE-API-011 and used by AE-API-013, AE-API-014, and AE-API-012 |
+To send account requests individually, run AE-API-011 first, then the dependent requests in order. Update, retrieval, login, and deletion are blocked if successful account creation has not been recorded.
 
-## Project Structure
+AE-API-010 generates an unrelated email and password for its negative login check.
 
-* `postman/` – Postman collection and sample environment
-* `test-cases/` – Documented API test cases
-* `screenshots/` – Evidence of successful test execution
+| Environment variable | Default | Purpose |
+|---|---|---|
+| `baseUrl` | `https://automationexercise.com` | Practice API host |
+| `searchProduct` | `top` | Keyword sent and checked by AE-API-005 |
+| `maxResponseTimeMs` | `0` | Optional AE-API-001 response-time threshold; 0 disables it |
 
-## Important Notes
+The practice API has no project-defined two-second SLA. Enable a timing threshold deliberately; functional assertions remain active regardless.
 
-* The sample environment does not contain private credentials. Enter your own disposable test credentials after importing it into Postman.
-* Some Automation Exercise endpoints return HTTP status 200 while providing a different application-level `responseCode` in the JSON body (for example 201, 400, 404, or 405). Both values are validated where applicable.
-* AE-API-007 needs an account that already exists on the practice site. Register one manually and put its credentials in `validEmail` and `validPassword`. The lifecycle tests use their own generated account (`newUserEmail`) and clean it up in AE-API-012.
+## Run with Newman
 
-## About Me
+Install Node.js 22 or later, then run from the repository root:
 
-Hi, I'm Reuben Jherico Silerio, a QA Engineer with more than three years of hands-on experience in manual and functional testing across web, mobile, and production environments. My experience includes smoke, regression, end-to-end, UAT, and production validation testing.
+```powershell
+npx --yes newman@6.2.2 run postman/Automation-Exercise-API-Testing.postman_collection.json -e postman/Automation-Exercise-Sample.postman_environment.json --timeout-request 30000 --reporters cli,junit --reporter-junit-export reports/api-tests.xml
+```
 
-I am expanding my automation skills through API testing with Postman and JavaScript, as well as UI automation using Python, Selenium WebDriver, Pytest, and the Page Object Model. I focus on creating clear test documentation, reliable assertions, and evidence-driven quality validation.
+Keep the default behavior of continuing after assertion failures so AE-API-012 can clean up the disposable account. Avoid `--bail` for a full lifecycle run.
+
+## Continuous integration
+
+The [workflow](.github/workflows/api-tests.yml) runs the collection on pushes and pull requests to `main`, and supports manual execution from **Actions → API tests → Run workflow**.
+
+Failed assertions produce a failed job. JUnit results are uploaded when available, including on failure, and retained for 14 days. No GitHub secrets are needed for the generated practice accounts. This repository performs continuous testing; it does not deploy an application.
+
+## Verification snapshot
+
+On 29 September 2026, the revised collection completed a live Newman run with **14 scenarios, 15 HTTP requests, and 67 passing assertions**. The extra request verifies login rejection after deletion. A separate guard check confirmed that running deletion without prior account creation fails without sending an HTTP request. The Actions badge above reports current CI status.
+
+## Evidence and limitations
+
+- The workbook and screenshots are **historical manual execution evidence**. Their recorded pass results are not the status of the latest collection or CI run.
+- The workbook uses the earlier `validEmail` naming and execution order. Follow this README and the canonical JSON collection for current automated runs.
+- The API may return HTTP 200 with JSON codes such as 201, 400, 404, or 405; tests distinguish these layers.
+- Search relevance checks cover the returned name, brand, and category fields. They do not independently prove completeness of the search results.
+- A canceled run or network failure can interrupt cleanup. In Postman, retain the generated collection values and rerun AE-API-012 after recovery. A failed creation response may require checking whether the practice server created the account before the connection failed.
+- Fourteen scenarios demonstrate the documented practice API cases, not exhaustive security, performance, or contract coverage.
+
+## Repository contents
+
+| Path | Contents |
+|---|---|
+| `postman/` | Canonical collection and usable sample environment |
+| `.github/workflows/api-tests.yml` | Newman automation and JUnit artifact upload |
+| `test-cases/` | Historical test-case workbook |
+| `screenshots/` | Historical execution evidence |
+
+## About the author
+
+**Reuben Jherico Silerio — QA Engineer**
+
+Professional experience in manual and functional testing across web, mobile, UAT, regression, and production validation. This project demonstrates API test design, JavaScript assertions, data isolation, and automated execution.
+
+[GitHub profile](https://github.com/siler1o) · [Selenium automation portfolio](https://github.com/siler1o/selenium-qa-automation-portfolio)
