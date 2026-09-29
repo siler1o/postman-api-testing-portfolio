@@ -15,11 +15,15 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "const response = pm.response.json();",
+              "(function () {",
+              "    pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+              "    let response;",
+              "    pm.test(\"Response body is valid JSON\", function () {",
+              "        response = pm.response.json();",
+              "        pm.expect(response).to.be.an(\"object\");",
+              "    });",
+              "    if (!response || typeof response !== \"object\") { return; }",
               "",
-              "pm.test(\"HTTP status is 200\", function () {",
-              "    pm.response.to.have.status(200);",
-              "});",
               "",
               "pm.test(\"JSON responseCode is 200\", function () {",
               "    pm.expect(response.responseCode).to.eql(200);",
@@ -35,7 +39,8 @@
               "    pm.test(\"Response time meets configured threshold\", function () {",
               "        pm.expect(pm.response.responseTime).to.be.below(limit);",
               "    });",
-              "}"
+              "}",
+              "})();"
             ]
           }
         }
@@ -64,11 +69,15 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "const response = pm.response.json();",
+              "(function () {",
+              "    pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+              "    let response;",
+              "    pm.test(\"Response body is valid JSON\", function () {",
+              "        response = pm.response.json();",
+              "        pm.expect(response).to.be.an(\"object\");",
+              "    });",
+              "    if (!response || typeof response !== \"object\") { return; }",
               "",
-              "pm.test(\"HTTP status is 200\", function () {",
-              "    pm.response.to.have.status(200);",
-              "});",
               "",
               "pm.test(\"JSON responseCode is 405\", function () {",
               "    pm.expect(response.responseCode).to.eql(405);",
@@ -79,9 +88,8 @@
               "        .to.eql(\"This request method is not supported.\");",
               "});",
               "",
-              "pm.test(\"Response body is valid JSON\", function () {",
-              "    pm.expect(response).to.be.an(\"object\");",
-              "});"
+              "",
+              "})();"
             ]
           }
         }
@@ -110,15 +118,16 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "const response = pm.response.json();",
+              "(function () {",
+              "    pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+              "    let response;",
+              "    pm.test(\"Response body is valid JSON\", function () {",
+              "        response = pm.response.json();",
+              "        pm.expect(response).to.be.an(\"object\");",
+              "    });",
+              "    if (!response || typeof response !== \"object\") { return; }",
               "",
-              "pm.test(\"HTTP status is 200\", function () {",
-              "    pm.response.to.have.status(200);",
-              "});",
               "",
-              "pm.test(\"Response body is valid JSON\", function () {",
-              "    pm.expect(response).to.be.an(\"object\");",
-              "});",
               "",
               "pm.test(\"JSON responseCode is 200\", function () {",
               "    pm.expect(response.responseCode).to.eql(200);",
@@ -132,7 +141,8 @@
               "pm.test(\"First brand has required fields\", function () {",
               "    pm.expect(response.brands[0]).to.have.property(\"id\");",
               "    pm.expect(response.brands[0]).to.have.property(\"brand\");",
-              "});"
+              "});",
+              "})();"
             ]
           }
         }
@@ -161,15 +171,16 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "const response = pm.response.json();",
+              "(function () {",
+              "    pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+              "    let response;",
+              "    pm.test(\"Response body is valid JSON\", function () {",
+              "        response = pm.response.json();",
+              "        pm.expect(response).to.be.an(\"object\");",
+              "    });",
+              "    if (!response || typeof response !== \"object\") { return; }",
               "",
-              "pm.test(\"HTTP status is 200\", function () {",
-              "    pm.response.to.have.status(200);",
-              "});",
               "",
-              "pm.test(\"Response body is valid JSON\", function () {",
-              "    pm.expect(response).to.be.an(\"object\");",
-              "});",
               "",
               "pm.test(\"JSON responseCode is 405\", function () {",
               "    pm.expect(response.responseCode).to.eql(405);",
@@ -177,7 +188,8 @@
               "",
               "pm.test(\"Unsupported method message is correct\", function () {",
               "    pm.expect(response.message).to.eql(\"This request method is not supported.\");",
-              "});"
+              "});",
+              "})();"
             ]
           }
         }
@@ -206,9 +218,15 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "const response = pm.response.json();",
+              "(function () {",
+              "    pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+              "    let response;",
+              "    pm.test(\"Response body is valid JSON\", function () {",
+              "        response = pm.response.json();",
+              "        pm.expect(response).to.be.an(\"object\");",
+              "    });",
+              "    if (!response || typeof response !== \"object\") { return; }",
               "const searchTerm = pm.variables.replaceIn(pm.request.body.formdata.get(\"search_product\")).trim().toLowerCase();",
-              "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
               "pm.test(\"JSON responseCode is 200\", () => pm.expect(response.responseCode).to.eql(200));",
               "pm.test(\"Search returns products\", function () {",
               "    pm.expect(response.products).to.be.an(\"array\").that.is.not.empty;",
@@ -221,7 +239,8 @@
               "        pm.expect(fields.some(value => typeof value === \"string\" && value.toLowerCase().includes(searchTerm)),",
               "            \"Unrelated product: \" + product.name).to.eql(true);",
               "    });",
-              "});"
+              "});",
+              "})();"
             ]
           }
         }
@@ -260,15 +279,16 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "const response = pm.response.json();",
+              "(function () {",
+              "    pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+              "    let response;",
+              "    pm.test(\"Response body is valid JSON\", function () {",
+              "        response = pm.response.json();",
+              "        pm.expect(response).to.be.an(\"object\");",
+              "    });",
+              "    if (!response || typeof response !== \"object\") { return; }",
               "",
-              "pm.test(\"HTTP status is 200\", function () {",
-              "    pm.response.to.have.status(200);",
-              "});",
               "",
-              "pm.test(\"Response body is valid JSON\", function () {",
-              "    pm.expect(response).to.be.an(\"object\");",
-              "});",
               "",
               "pm.test(\"JSON responseCode is 400\", function () {",
               "    pm.expect(response.responseCode).to.eql(400);",
@@ -276,7 +296,8 @@
               "",
               "pm.test(\"Missing parameter message is correct\", function () {",
               "    pm.expect(response.message).to.eql(\"Bad request, search_product parameter is missing in POST request.\");",
-              "});"
+              "});",
+              "})();"
             ]
           }
         }
@@ -332,15 +353,16 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "const response = pm.response.json();",
+              "(function () {",
+              "    pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+              "    let response;",
+              "    pm.test(\"Response body is valid JSON\", function () {",
+              "        response = pm.response.json();",
+              "        pm.expect(response).to.be.an(\"object\");",
+              "    });",
+              "    if (!response || typeof response !== \"object\") { return; }",
               "",
-              "pm.test(\"HTTP status is 200\", function () {",
-              "    pm.response.to.have.status(200);",
-              "});",
               "",
-              "pm.test(\"Response body is valid JSON\", function () {",
-              "    pm.expect(response).to.be.an(\"object\");",
-              "});",
               "",
               "pm.test(\"JSON responseCode is 201\", function () {",
               "    pm.expect(response.responseCode).to.eql(201);",
@@ -351,7 +373,8 @@
               "});",
               "if (pm.response.code === 200 && response.responseCode === 201) {",
               "    pm.collectionVariables.set(\"createdUserEmail\", pm.collectionVariables.get(\"newUserEmail\"));",
-              "}"
+              "}",
+              "})();"
             ]
           }
         }
@@ -470,15 +493,16 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "const response = pm.response.json();",
+              "(function () {",
+              "    pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+              "    let response;",
+              "    pm.test(\"Response body is valid JSON\", function () {",
+              "        response = pm.response.json();",
+              "        pm.expect(response).to.be.an(\"object\");",
+              "    });",
+              "    if (!response || typeof response !== \"object\") { return; }",
               "",
-              "pm.test(\"HTTP status is 200\", function () {",
-              "    pm.response.to.have.status(200);",
-              "});",
               "",
-              "pm.test(\"Response body is valid JSON\", function () {",
-              "    pm.expect(response).to.be.an(\"object\");",
-              "});",
               "",
               "pm.test(\"JSON responseCode is 200\", function () {",
               "    pm.expect(response.responseCode).to.eql(200);",
@@ -486,7 +510,8 @@
               "",
               "pm.test(\"Valid login message is correct\", function () {",
               "    pm.expect(response.message).to.eql(\"User exists!\");",
-              "});"
+              "});",
+              "})();"
             ]
           }
         },
@@ -545,15 +570,16 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "const response = pm.response.json();",
+              "(function () {",
+              "    pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+              "    let response;",
+              "    pm.test(\"Response body is valid JSON\", function () {",
+              "        response = pm.response.json();",
+              "        pm.expect(response).to.be.an(\"object\");",
+              "    });",
+              "    if (!response || typeof response !== \"object\") { return; }",
               "",
-              "pm.test(\"HTTP status is 200\", function () {",
-              "    pm.response.to.have.status(200);",
-              "});",
               "",
-              "pm.test(\"Response body is valid JSON\", function () {",
-              "    pm.expect(response).to.be.an(\"object\");",
-              "});",
               "",
               "pm.test(\"JSON responseCode is 400\", function () {",
               "    pm.expect(response.responseCode).to.eql(400);",
@@ -561,7 +587,8 @@
               "",
               "pm.test(\"Missing email message is correct\", function () {",
               "    pm.expect(response.message).to.eql(\"Bad request, email or password parameter is missing in POST request.\");",
-              "});"
+              "});",
+              "})();"
             ]
           }
         },
@@ -621,15 +648,16 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "const response = pm.response.json();",
+              "(function () {",
+              "    pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+              "    let response;",
+              "    pm.test(\"Response body is valid JSON\", function () {",
+              "        response = pm.response.json();",
+              "        pm.expect(response).to.be.an(\"object\");",
+              "    });",
+              "    if (!response || typeof response !== \"object\") { return; }",
               "",
-              "pm.test(\"HTTP status is 200\", function () {",
-              "    pm.response.to.have.status(200);",
-              "});",
               "",
-              "pm.test(\"Response body is valid JSON\", function () {",
-              "    pm.expect(response).to.be.an(\"object\");",
-              "});",
               "",
               "pm.test(\"JSON responseCode is 405\", function () {",
               "    pm.expect(response.responseCode).to.eql(405);",
@@ -637,7 +665,8 @@
               "",
               "pm.test(\"Unsupported method message is correct\", function () {",
               "    pm.expect(response.message).to.eql(\"This request method is not supported.\");",
-              "});"
+              "});",
+              "})();"
             ]
           }
         }
@@ -666,15 +695,16 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "const response = pm.response.json();",
+              "(function () {",
+              "    pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+              "    let response;",
+              "    pm.test(\"Response body is valid JSON\", function () {",
+              "        response = pm.response.json();",
+              "        pm.expect(response).to.be.an(\"object\");",
+              "    });",
+              "    if (!response || typeof response !== \"object\") { return; }",
               "",
-              "pm.test(\"HTTP status is 200\", function () {",
-              "    pm.response.to.have.status(200);",
-              "});",
               "",
-              "pm.test(\"Response body is valid JSON\", function () {",
-              "    pm.expect(response).to.be.an(\"object\");",
-              "});",
               "",
               "pm.test(\"JSON responseCode is 404\", function () {",
               "    pm.expect(response.responseCode).to.eql(404);",
@@ -682,7 +712,8 @@
               "",
               "pm.test(\"Invalid login message is correct\", function () {",
               "    pm.expect(response.message).to.eql(\"User not found!\");",
-              "});"
+              "});",
+              "})();"
             ]
           }
         },
@@ -736,15 +767,16 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "const response = pm.response.json();",
+              "(function () {",
+              "    pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+              "    let response;",
+              "    pm.test(\"Response body is valid JSON\", function () {",
+              "        response = pm.response.json();",
+              "        pm.expect(response).to.be.an(\"object\");",
+              "    });",
+              "    if (!response || typeof response !== \"object\") { return; }",
               "",
-              "pm.test(\"HTTP status is 200\", function () {",
-              "    pm.response.to.have.status(200);",
-              "});",
               "",
-              "pm.test(\"Response body is valid JSON\", function () {",
-              "    pm.expect(response).to.be.an(\"object\");",
-              "});",
               "",
               "pm.test(\"JSON responseCode is 200\", function () {",
               "    pm.expect(response.responseCode).to.eql(200);",
@@ -752,7 +784,8 @@
               "",
               "pm.test(\"Account update message is correct\", function () {",
               "    pm.expect(response.message).to.eql(\"User updated!\");",
-              "});"
+              "});",
+              "})();"
             ]
           }
         },
@@ -886,15 +919,16 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "const response = pm.response.json();",
+              "(function () {",
+              "    pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+              "    let response;",
+              "    pm.test(\"Response body is valid JSON\", function () {",
+              "        response = pm.response.json();",
+              "        pm.expect(response).to.be.an(\"object\");",
+              "    });",
+              "    if (!response || typeof response !== \"object\") { return; }",
               "",
-              "pm.test(\"HTTP status is 200\", function () {",
-              "    pm.response.to.have.status(200);",
-              "});",
               "",
-              "pm.test(\"Response body is valid JSON\", function () {",
-              "    pm.expect(response).to.be.an(\"object\");",
-              "});",
               "",
               "pm.test(\"JSON responseCode is 200\", function () {",
               "    pm.expect(response.responseCode).to.eql(200);",
@@ -922,7 +956,8 @@
               "",
               "pm.test(\"Updated city is correct\", function () {",
               "    pm.expect(response.user.city).to.eql(\"Quezon City\");",
-              "});"
+              "});",
+              "})();"
             ]
           }
         },
@@ -988,15 +1023,16 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "const response = pm.response.json();",
+              "(function () {",
+              "    pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+              "    let response;",
+              "    pm.test(\"Response body is valid JSON\", function () {",
+              "        response = pm.response.json();",
+              "        pm.expect(response).to.be.an(\"object\");",
+              "    });",
+              "    if (!response || typeof response !== \"object\") { return; }",
               "",
-              "pm.test(\"HTTP status is 200\", function () {",
-              "    pm.response.to.have.status(200);",
-              "});",
               "",
-              "pm.test(\"Response body is valid JSON\", function () {",
-              "    pm.expect(response).to.be.an(\"object\");",
-              "});",
               "",
               "pm.test(\"JSON responseCode is 200\", function () {",
               "    pm.expect(response.responseCode).to.eql(200);",
@@ -1027,7 +1063,8 @@
               "        pm.collectionVariables.unset(key);",
               "        pm.variables.unset(key);",
               "    });",
-              "}"
+              "}",
+              "})();"
             ]
           }
         }
