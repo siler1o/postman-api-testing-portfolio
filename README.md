@@ -1,3 +1,5 @@
+![Postman API Testing — REST APIs, Newman, JavaScript assertions, and GitHub Actions](media/postman-api-banner.png)
+
 # Postman API Testing Portfolio
 
 [![API tests](https://github.com/siler1o/postman-api-testing-portfolio/actions/workflows/api-tests.yml/badge.svg)](https://github.com/siler1o/postman-api-testing-portfolio/actions/workflows/api-tests.yml)
